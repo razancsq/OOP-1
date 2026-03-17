@@ -13,6 +13,12 @@ A console-based restaurant management system built with Java, applying core OOP 
 
 ---
 
+## UML Diagram
+
+![UML Diagram](UML.png)
+
+---
+
 ## Class Structure
 
 ```
@@ -31,27 +37,62 @@ Payment (interface)
 
 ---
 
+## Class Descriptions
+
+### Person (Abstract)
+Base abstract class for all system users. Defines shared attributes `name` and `phoneNumber` with getter methods. Ensures reusability and avoids code duplication across `Customer` and `Manager`.
+
+### Customer
+Extends `Person`. Represents a restaurant customer. Stores a list of orders using `ArrayList<Order>`. Provides `addOrder()` and `getOrders()` methods. An aggregation relationship exists between `Customer` and `Order`, allowing each customer to hold multiple orders.
+
+### Manager
+Extends `Person`. Represents the restaurant manager. Includes a read-only `password` attribute for secure access. Manages the menu through `addMeal()`, `deleteMeal()`, `viewMenu()`, `isMenuEmpty()`, and `getMealPrice()` methods. Only authorized users with the correct password can update the menu.
+
+### Order (Abstract)
+Abstract class representing a customer order. Contains `totalCost` (double) and `currency` (String, default "SAR"). Declares the abstract method `calculateTotal()` which subclasses must implement.
+
+### OnSite
+Extends `Order`. Handles in-restaurant dining orders. Includes a `branch` attribute. Overrides `calculateTotal()` to return the total cost without additional fees.
+
+### Takeaway
+Extends `Order`. Handles delivery orders. Includes a fixed delivery fee of 15 SAR. Overrides `calculateTotal()` to return `totalCost + deliveryFees`.
+
+### Payment (Interface)
+Interface defining the `authorized()` method. Implemented by `Cash` and `Credit` to handle different payment types.
+
+### Cash
+Implements `Payment`. Represents cash transactions. The `authorized()` method always returns `true` since cash is always accepted.
+
+### Credit
+Implements `Payment`. Represents credit card transactions. Contains `nameOnCard`, `expDate`, and `cardNumber` attributes. The `authorized()` method validates the card by checking whether the expiry date is after the current date using `SimpleDateFormat`. Includes a try-catch block to handle invalid date formats gracefully.
+
+---
+
 ## OOP Concepts Applied
 
 | Concept | Application |
 |---------|-------------|
-| Abstraction | `Person`, `Order` are abstract classes; `Payment` is an interface |
-| Inheritance | `Customer` and `Manager` extend `Person`; `OnSite` and `Takeaway` extend `Order` |
-| Encapsulation | Private attributes accessed through public methods |
-| Polymorphism | `calculateTotal()` overridden in `OnSite` and `Takeaway`; `authorized()` in `Cash` and `Credit` |
+| Abstraction | `Person` and `Order` are abstract classes; `Payment` is an interface |
+| Inheritance | `Customer` and `Manager` extend `Person`; `OnSite` and `Takeaway` extend `Order`; `Cash` and `Credit` implement `Payment` |
+| Encapsulation | Private attributes like `password`, `meals`, and `orders` are accessed through public methods |
+| Polymorphism | `calculateTotal()` overridden in `OnSite` and `Takeaway`; `authorized()` overridden in `Cash` and `Credit` |
 
 ---
 
 ## Features
 
 **Manager**
-- Password-protected login
-- Add, delete, and view menu items
+- Password-protected login (`mng22`)
+- Add meals with name and price
+- Delete meals by name
+- View full menu
 
 **Customer**
-- View menu and place orders
-- Choose between OnSite or Takeaway (delivery fee: 15 SAR)
-- Pay by Cash or Credit Card (with expiry date validation)
+- View available menu
+- Select multiple meals and calculate total
+- Choose order type: OnSite or Takeaway (delivery fee: 15 SAR)
+- Pay by Cash or Credit Card
+- Credit card expiry date validation
 
 ---
 
@@ -61,6 +102,7 @@ Payment (interface)
 2. Build and run `AlDiwanRestaurant.java`
 3. Follow the console prompts
 4. Manager password: `mng22`
+5. Credit card date format: `dd-MM-yyyy`
 
 ---
 
@@ -69,19 +111,13 @@ Payment (interface)
 | File | Description |
 |------|-------------|
 | `AlDiwanRestaurant.java` | Main class and entry point |
-| `Person.java` | Abstract base class |
-| `Customer.java` | Customer role |
+| `Person.java` | Abstract base class for all users |
+| `Customer.java` | Customer role with order management |
 | `Manager.java` | Manager role with menu control |
-| `Order.java` | Abstract order class + OnSite and Takeaway subclasses |
+| `Order.java` | Abstract order class containing OnSite and Takeaway subclasses |
 | `Payment.java` | Payment interface |
-| `Cash.java` | Cash payment implementation |
-| `Credit.java` | Credit card payment with expiry validation |
-
----
-
-## UML Diagram
-
-![UML Diagram](UML.png)
+| `Cash.java` | Cash payment — always authorized |
+| `Credit.java` | Credit card payment with expiry date validation |
 
 ---
 
